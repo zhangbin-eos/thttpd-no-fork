@@ -28,7 +28,6 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-
 /* The following configuration settings are sorted in order of decreasing
 ** likelihood that you'd want to change them - most likely first, least
 ** likely last.
@@ -145,7 +144,6 @@
 ** or on the command like with the -T flag.
 */
 #define DEFAULT_CHARSET "UTF-8"
-
 
 /* Most people won't want to change anything below here. */
 
@@ -309,7 +307,6 @@
 */
 #define DESIRED_MAX_MAPPED_BYTES 1000000000
 
-
 /* You almost certainly don't want to change anything below here. */
 
 /* CONFIGURE: When throttling CGI programs, we don't know how many bytes
@@ -389,4 +386,4 @@
 */
 #define MIN_WOULDBLOCK_DELAY 100L
 
-#endif /* _CONFIG_H_ */
+#endif				/* _CONFIG_H_ */

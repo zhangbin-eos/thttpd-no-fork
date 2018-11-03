@@ -17,22 +17,21 @@
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)strerror.c  5.1 (Berkeley) 4/9/89";
-#endif /* LIBC_SCCS and not lint */
+#endif				/* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
 
 #include <stdio.h>
 
-char *
-strerror(errnum)
-	int errnum;
+char *strerror(errnum)
+int errnum;
 {
 	extern int sys_nerr;
 	extern char *sys_errlist[];
 	static char ebuf[20];
 
 	if ((unsigned int)errnum < sys_nerr)
-		return(sys_errlist[errnum]);
+		return (sys_errlist[errnum]);
 	(void)sprintf(ebuf, "Unknown error: %d", errnum);
-	return(ebuf);
+	return (ebuf);
 }

@@ -40,22 +40,21 @@
 
 #include "config.h"
 
-static char* argv0;
+static char *argv0;
 
-int
-main( int argc, char* argv[] )
-    {
-    char* cp;
+int main(int argc, char *argv[])
+{
+	char *cp;
 
-    argv0 = argv[0];
-    cp = strrchr( argv0, '/' );
-    if ( cp != (char*) 0 )
-	++cp;
-    else
-	cp = argv0;
-    openlog( cp, LOG_NDELAY|LOG_PID, LOG_FACILITY );
-    syslog( LOG_CRIT, "phf CGI probe from %s", getenv( "REMOTE_ADDR" ) );
-    (void) printf( "\
+	argv0 = argv[0];
+	cp = strrchr(argv0, '/');
+	if (cp != (char *)0)
+		++cp;
+	else
+		cp = argv0;
+	openlog(cp, LOG_NDELAY | LOG_PID, LOG_FACILITY);
+	syslog(LOG_CRIT, "phf CGI probe from %s", getenv("REMOTE_ADDR"));
+	(void)printf("\
 Content-type: text/html\n\
 Status: 404/html\n\
 \n\
@@ -64,6 +63,6 @@ Status: 404/html\n\
 The requested object does not exist on this server.\n\
 The link you followed is either outdated, inaccurate,\n\
 or the server has been instructed not to let you have it.\n\
-</BODY></HTML>\n" );
-    exit( 0 );
-    }
+</BODY></HTML>\n");
+	exit(0);
+}
