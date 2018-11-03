@@ -74,7 +74,7 @@
 ** or whatever.  If you don't want any limit, comment this out, but that's
 ** probably a really bad idea.
 */
-#define CGI_TIMELIMIT 30
+//#define CGI_TIMELIMIT 30
 
 /* CONFIGURE: Maximum number of simultaneous CGI programs allowed.
 ** If this many are already running, then attempts to run more will
@@ -135,7 +135,7 @@
 ** If you undefine this then thttpd will not implement authentication
 ** at all and will not check for auth files, which saves a bit of CPU time.
 */
-#define AUTH_FILE ".htpasswd"
+//#define AUTH_FILE ".htpasswd"
 
 /* CONFIGURE: The default character set name to use with text MIME types.
 ** This gets substituted into the MIME types where they have a "%s".
@@ -176,7 +176,7 @@
 ** when returning into to browsers.  Instead it'll just say "thttpd" with
 ** no version.
 */
-#define SHOW_SERVER_VERSION
+//#define SHOW_SERVER_VERSION
 
 /* CONFIGURE: Define this if you want to always chroot(), without having
 ** to give the -r command line flag.  Some people like this as a security
