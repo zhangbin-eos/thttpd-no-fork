@@ -1,0 +1,33 @@
+# Created by https://www.gitignore.io/api/c
+# Edit at https://www.gitignore.io/?templates=c
+
+### C ###
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.cgi
+objs/
+
+# Makefile
+Makefile
+cgi-src/Makefile
+extras/Makefile
+# config
+config.cache
+config.log
+config.status
+mime_encodings.h
+mime_types.h
+conftest.c
+conftest
+conftest.out
+
+# bin
+cgi-src/phf
+cgi-src/redirect
+cgi-src/ssi
+extras/htpasswd
+extras/makeweb
+thttpd
