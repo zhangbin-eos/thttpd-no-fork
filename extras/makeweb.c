@@ -96,17 +96,16 @@ This is probably a configuration error.\n", dirname);
 		 */
 		if (!S_ISDIR(sb.st_mode))
 		{
-			(void)
-			    printf
+			(void)printf
 			    ("%s already exists but is not a directory!\n",
 			     dirname);
 			exit(1);
 		}
 		if (sb.st_uid != uid)
 		{
-			(void)
-			    printf("%s already exists but you don't own it!\n",
-				   dirname);
+			(void)printf
+			    ("%s already exists but you don't own it!\n",
+			     dirname);
 			exit(1);
 		}
 		(void)printf("Web directory %s already existed.\n", dirname);

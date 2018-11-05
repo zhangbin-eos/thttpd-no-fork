@@ -29,3 +29,12 @@ the mailing list by sending a "subscribe" to thttpd-announce-request@mail.acme.c
 
 Comments to:
     Jef Poskanzer  jef@mail.acme.com  http://www.acme.com/jef/
+
+
+    Author  : zhangbin.eos@foxmail.com 5/11/2018
+在调用cgi部分使用了很多的内存申请,但是没有释放,如果使用的是fork的方式,则不会产
+生什么问题,但是如果使用其他的方式,会造成很多的内存泄露,并导致程序段错误.
+
+配置过程将产生一个配置文件在objs中
+运行时,确保www文件和运行权限是可访问的.路径权限不正确时,程序运行异常
+

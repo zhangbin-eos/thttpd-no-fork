@@ -31,3 +31,6 @@ cgi-src/ssi
 extras/htpasswd
 extras/makeweb
 thttpd
+
+# test/debug
+debug

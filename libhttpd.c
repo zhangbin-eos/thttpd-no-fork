@@ -165,8 +165,27 @@ static char *build_env(char *fmt, char *arg);
 #ifdef SERVER_NAME_LIST
 static char *hostname_map(char *hostname);
 #endif				/* SERVER_NAME_LIST */
-static char **make_envp(httpd_conn * hc);
-static char **make_argp(httpd_conn * hc);
+/*Author        : zhangbin.eos@foxmail.com 5/11/2018 */
+typedef struct  
+{
+	int fd;
+	
+}print_func_handle_t;
+/*******************************
+-Function Name : ENV_PRINT_FUNC/ARG_PRINT_FUNC
+-Description   : 
+-Call          : 
+-Called By     : 
+-Input  Param  : void* = print_func_handle_t*
+                 char* = databuff
+                 size_t= datalen
+-Return Value  : datalen
+-Author        : zhangbin.eos@foxmail.com 5/11/2018
+*********************************/
+typedef  int (*ENV_PRINT_FUNC)(void*,char*,size_t);
+typedef  int (*ARG_PRINT_FUNC)(void*,char*,size_t);
+static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param);
+static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param);
 static void cgi_interpose_input(httpd_conn * hc, int wfd);
 static void post_post_garbage_hack(httpd_conn * hc);
 static void cgi_interpose_output(httpd_conn * hc, int rfd);
@@ -2103,8 +2122,8 @@ int httpd_parse_request(httpd_conn * hc)
 					{
 						syslog(LOG_ERR,
 						       "%.80s way too much Accept: data",
-						       httpd_ntoa(&hc->
-								  client_addr));
+						       httpd_ntoa
+						       (&hc->client_addr));
 						continue;
 					}
 					httpd_realloc_str(&hc->accept,
@@ -2129,8 +2148,8 @@ int httpd_parse_request(httpd_conn * hc)
 					{
 						syslog(LOG_ERR,
 						       "%.80s way too much Accept-Encoding: data",
-						       httpd_ntoa(&hc->
-								  client_addr));
+						       httpd_ntoa
+						       (&hc->client_addr));
 						continue;
 					}
 					httpd_realloc_str(&hc->accepte,
@@ -2183,17 +2202,14 @@ int httpd_parse_request(httpd_conn * hc)
 							hc->got_range = 1;
 							hc->first_byte_index =
 							    atoll(cp + 1);
-							if (hc->
-							    first_byte_index <
-							    0)
+							if (hc->first_byte_index
+							    < 0)
 								hc->first_byte_index = 0;
 							if (isdigit
 							    ((int)cp_dash[1]))
 							{
 								hc->last_byte_index = atoll(cp_dash + 1);
-								if (hc->
-								    last_byte_index
-								    < 0)
+								if (hc->last_byte_index < 0)
 									hc->last_byte_index = -1;
 							}
 						}
@@ -2886,8 +2902,7 @@ mode  links    bytes  last-changed  name\n\
 						(void)my_snprintf(rname,
 								  maxrname,
 								  "%s%s",
-								  hc->
-								  origfilename,
+								  hc->origfilename,
 								  nameptrs[i]);
 				}
 				httpd_realloc_str(&encrname, &maxencrname,
@@ -3087,7 +3102,7 @@ static char *hostname_map(char *hostname)
 ** letting malicious clients overrun a buffer.  We don't have
 ** to worry about freeing stuff since we're a sub-process.
 */
-static char **make_envp(httpd_conn * hc)
+static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 {
 	static char *envp[50];
 	int envn;
@@ -3183,7 +3198,7 @@ static char **make_envp(httpd_conn * hc)
 ** since we're a sub-process.  This gets done after make_envp() because we
 ** scribble on hc->query.
 */
-static char **make_argp(httpd_conn * hc)
+static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 {
 	char **argp;
 	int argn;
@@ -3480,10 +3495,10 @@ static void cgi_child(httpd_conn * hc)
 	}
 
 	/* Make the environment vector. */
-	envp = make_envp(hc);
+	//envp = make_envp(hc);
 
 	/* Make the argument vector. */
-	argp = make_argp(hc);
+	//argp = make_argp(hc);
 
 	/* Set up stdin.  For POSTs we may have to set up a pipe from an
 	 ** interposer process, depending on if we've read some of the data
@@ -3650,23 +3665,42 @@ static int cgi(httpd_conn * hc)
 	}
 	++hc->hs->cgi_count;
 	httpd_clear_ndelay(hc->conn_fd);
-	r = fork();
-	if (r < 0)
-	{
-		syslog(LOG_ERR, "fork - %m");
-		httpd_send_err(hc, 500, err500title, "", err500form,
-			       hc->encodedurl);
-		return -1;
-	}
-	if (r == 0)
-	{
-		/* Child process. */
-		sub_process = 1;
-		httpd_unlisten(hc->hs);
-		cgi_child(hc);
-	}
-
+	/*Author	: zhangbin.eos@foxmail.com 5/11/2018 */
+	/* make_envp() and make_argp() have very hard Memory leak,
+	 * if use fork,it's not problem.
+	 */
+	
+//	r = fork();
+//	if (r < 0)
+//	{
+//	      syslog(LOG_ERR, "fork - %m");
+//	      httpd_send_err(hc, 500, err500title, "", err500form,
+//	                     hc->encodedurl);
+//	      return -1;
+//	}
+//	if (r == 0)
+//	{
+//	      /* Child process. */
+//	      sub_process = 1;
+//	      httpd_unlisten(hc->hs);
+//	      cgi_child(hc);
+//	}
 	/* Parent process. */
+	
+	/*-------Author  : zhangbin.eos@foxmail.com */
+	char buff[128];
+	sprintf(buff,"%s","Content-type: application/json; charset=utf-8\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","Cache-Control: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","Pragma: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));	
+	sprintf(buff,"%s","Expires: 0\r\n\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","{\"status\":\"success\"}\n\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	/*-------End	 : 5/11/2018 */
+	
 	syslog(LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r,
 	       hc->expnfilename);
 #ifdef CGI_TIMELIMIT
@@ -3994,8 +4028,9 @@ static void make_log_entry(httpd_conn * hc, struct timeval *nowP)
 		(void)my_snprintf(url, sizeof(url),
 				  "/%.100s%.200s",
 				  hc->hostname ==
-				  (char *)0 ? hc->hs->server_hostname : hc->
-				  hostname, hc->encodedurl);
+				  (char *)0 ? hc->hs->
+				  server_hostname : hc->hostname,
+				  hc->encodedurl);
 	else
 		(void)my_snprintf(url, sizeof(url), "%.200s", hc->encodedurl);
 	/* Format the bytes. */
