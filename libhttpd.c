@@ -3110,7 +3110,9 @@ static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 	char buf[256];
 
 	envn = 0;
-	envp[envn++] = build_env("PATH=%s", CGI_PATH);
+	/*PATH 目前没啥用-------Author  : zhangbin.eos@foxmail.com */
+	//envp[envn++] = build_env("PATH=%s", CGI_PATH);
+	/*-------End	 : 5/11/2018 */
 #ifdef CGI_LD_LIBRARY_PATH
 	envp[envn++] = build_env("LD_LIBRARY_PATH=%s", CGI_LD_LIBRARY_PATH);
 #endif				/* CGI_LD_LIBRARY_PATH */
@@ -3670,6 +3672,9 @@ static void cgi_child(httpd_conn * hc)
 	_exit(1);
 }
 
+/*-------Author  : zhangbin.eos@foxmail.com
+这部分传递可以使用domain socket,这种方法在post的时候可以传递文件描述符,或其他控制信息.
+-------End     : 5/11/2018 */
 int print_func_debug(void * handle,char * data,size_t datalen)
 {
 	print_func_handle_t * print_handle=(print_func_handle_t * )handle;
