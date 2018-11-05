@@ -38,3 +38,45 @@ Comments to:
 配置过程将产生一个配置文件在objs中
 运行时,确保www文件和运行权限是可访问的.路径权限不正确时,程序运行异常
 
+1.数据是空的时候
+curl -G   http://192.168.20.127/cgi-bin/lua_cgi_test.cgi
+结果
+env:
+	PATH=/usr/local/bin:/usr/ucb:/bin:/usr/bin
+	SERVER_SOFTWARE=thttpd/2.29 23May2018
+	SERVER_NAME=192.168.20.127
+	GATEWAY_INTERFACE=CGI/1.1
+	SERVER_PROTOCOL=HTTP/1.1
+	SERVER_PORT=80
+	REQUEST_METHOD=GET
+	SCRIPT_NAME=/cgi-bin/lua_cgi_test.cgi
+	REMOTE_ADDR=192.168.20.127
+	HTTP_USER_AGENT=curl/7.47.0
+	HTTP_ACCEPT=*/*
+	HTTP_HOST=192.168.20.127
+	CGI_PATTERN=cgi-bin/**
+arg:
+	lua_cgi_test.cgi
+
+1.数据为
+
+curl -G  --data 'query={"name":"switch","data":{"attribute_name":"port_cfg","type":"v","index":1}}' http://192.168.20.127/cgi-bin/lua_cgi_test.cgi
+结果
+env:
+	PATH=/usr/local/bin:/usr/ucb:/bin:/usr/bin
+	SERVER_SOFTWARE=thttpd/2.29 23May2018
+	SERVER_NAME=192.168.20.127
+	GATEWAY_INTERFACE=CGI/1.1
+	SERVER_PROTOCOL=HTTP/1.1
+	SERVER_PORT=80
+	REQUEST_METHOD=GET
+	SCRIPT_NAME=/cgi-bin/lua_cgi_test.cgi
+	QUERY_STRING=query={"name":"switch","data":{"attribute_name":"port_cfg","type":"v","index":1}}
+	REMOTE_ADDR=192.168.20.127
+	HTTP_USER_AGENT=curl/7.47.0
+	HTTP_ACCEPT=*/*
+	HTTP_HOST=192.168.20.127
+	CGI_PATTERN=cgi-bin/**
+arg:
+	lua_cgi_test.cgi
+
