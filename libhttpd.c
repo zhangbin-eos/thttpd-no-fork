@@ -3191,7 +3191,16 @@ static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 	envp[envn++] = build_env("CGI_PATTERN=%s", hc->hs->cgi_pattern);
 
 	envp[envn] = (char *)0;
-	return envp;
+	/*-------Author  : zhangbin.eos@foxmail.com */
+	int i=0;
+	for(i=0;i<envn;i++)
+	{
+		print_func(param,envp[i],strlen(envp[i]));
+
+	}		
+	free(envp[0]);
+	/*-------End	 : 5/11/2018 */
+	return ;
 }
 
 /* Set up argument vector.  Again, we don't have to worry about freeing stuff
@@ -3245,7 +3254,16 @@ static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 	}
 
 	argp[argn] = (char *)0;
-	return argp;
+	/*-------Author  : zhangbin.eos@foxmail.com */
+	int i=0;
+	for(i=0;i<argn;i++)
+	{
+		print_func(param,argp[i],strlen(argp[i]));
+	}
+	free(argp);
+	/*-------End	 : 5/11/2018 */
+
+	return ;
 }
 
 /* This routine is used only for POST requests.  It reads the data
@@ -3652,6 +3670,42 @@ static void cgi_child(httpd_conn * hc)
 	_exit(1);
 }
 
+int print_func_debug(void * handle,char * data,size_t datalen)
+{
+	print_func_handle_t * print_handle=(print_func_handle_t * )handle;
+	if(data==NULL)
+	{
+		data="NULL";
+		datalen=strlen(data);
+	}
+	syslog(LOG_ERR, "print_func,str=%s;;len=%d",data,datalen);
+	return datalen;
+}
+
+static int cgi_debug(httpd_conn * hc)
+{
+	
+	/*-------Author  : zhangbin.eos@foxmail.com */
+	
+	make_envp(hc,print_func_debug,NULL);
+	make_argp(hc,print_func_debug,NULL);
+
+	
+	char buff[128];
+	sprintf(buff,"%s","Content-type: application/json; charset=utf-8\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","Cache-Control: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","Pragma: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));	
+	sprintf(buff,"%s","Expires: 0\r\n\r\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff,"%s","{\"status\":\"success\"}\n\n");
+	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	/*-------End	 : 5/11/2018 */
+	return 0;
+}
+
 static int cgi(httpd_conn * hc)
 {
 	int r;
@@ -3685,22 +3739,10 @@ static int cgi(httpd_conn * hc)
 //	      httpd_unlisten(hc->hs);
 //	      cgi_child(hc);
 //	}
-	/* Parent process. */
-	
 	/*-------Author  : zhangbin.eos@foxmail.com */
-	char buff[128];
-	sprintf(buff,"%s","Content-type: application/json; charset=utf-8\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","Cache-Control: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","Pragma: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));	
-	sprintf(buff,"%s","Expires: 0\r\n\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","{\"status\":\"success\"}\n\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	cgi_debug(hc);
 	/*-------End	 : 5/11/2018 */
-	
+	/* Parent process. */
 	syslog(LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r,
 	       hc->expnfilename);
 #ifdef CGI_TIMELIMIT
