@@ -1,3 +1,5 @@
+#! /bin/sh
+
 make distclean 2>&1 > /dev/null
 rm -rf $(pwd)/objs/
 
@@ -26,3 +28,6 @@ port=80
 # host=0.0.0.0
 charset=UTF-8
 EOF
+
+mkdir -p $(pwd)/objs/www/cgi-bin/
+cp lua_cgi_test.lua $(pwd)/objs/www/cgi-bin/lua_cgi_test.cgi
