@@ -23,6 +23,9 @@ mime_types.h
 conftest.c
 conftest
 conftest.out
+confdefs.h
+conftest.s1
+conftest.subs
 
 # bin
 cgi-src/phf
