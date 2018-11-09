@@ -26,6 +26,7 @@ conftest.out
 confdefs.h
 conftest.s1
 conftest.subs
+version.h
 
 # bin
 cgi-src/phf
@@ -33,7 +34,7 @@ cgi-src/redirect
 cgi-src/ssi
 extras/htpasswd
 extras/makeweb
-cgi-daemon/cgi_daemon
+cgi_daemon
 thttpd
 
 # test/debug

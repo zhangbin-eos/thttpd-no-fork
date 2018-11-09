@@ -32,5 +32,16 @@ EOF
 mkdir -p $(pwd)/objs/www/cgi-bin/
 cp lua_cgi_test.lua $(pwd)/objs/www/cgi-bin/lua_cgi_test.cgi
 
+BUILD_DATE=$(date +"%Y/%m/%d %H:%M:%S")
 
+cat > $(pwd)/version.h <<-EOF
+/* version.h - version defines for thttpd and libhttpd */
 
+#ifndef _VERSION_H_
+#define _VERSION_H_
+
+#define SERVER_SOFTWARE "powered by thttpd/2.29 $BUILD_DATE"
+#define SERVER_ADDRESS "https://github.com/zhangbin-eos/thttpd-no-fork"
+
+#endif				/* _VERSION_H_ */
+EOF

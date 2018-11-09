@@ -81,7 +81,6 @@
 #include "match.h"
 #include "tdate_parse.h"
 
-
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
 #endif
@@ -167,11 +166,11 @@ static char *build_env(char *fmt, char *arg);
 static char *hostname_map(char *hostname);
 #endif				/* SERVER_NAME_LIST */
 /*Author        : zhangbin.eos@foxmail.com 5/11/2018 */
-typedef struct  
+typedef struct
 {
 	int fd;
-	
-}print_func_handle_t;
+
+} print_func_handle_t;
 /*******************************
 -Function Name : ENV_PRINT_FUNC/ARG_PRINT_FUNC
 -Description   : 
@@ -183,10 +182,10 @@ typedef struct
 -Return Value  : datalen
 -Author        : zhangbin.eos@foxmail.com 5/11/2018
 *********************************/
-typedef  int (*ENV_PRINT_FUNC)(void*,char*,size_t);
-typedef  int (*ARG_PRINT_FUNC)(void*,char*,size_t);
-static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param);
-static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param);
+typedef int (*ENV_PRINT_FUNC) (void *, char *, size_t);
+typedef int (*ARG_PRINT_FUNC) (void *, char *, size_t);
+static void make_envp(httpd_conn * hc, ENV_PRINT_FUNC print_func, void *param);
+static void make_argp(httpd_conn * hc, ENV_PRINT_FUNC print_func, void *param);
 static void cgi_interpose_input(httpd_conn * hc, int wfd);
 static void post_post_garbage_hack(httpd_conn * hc);
 static void cgi_interpose_output(httpd_conn * hc, int rfd);
@@ -381,10 +380,10 @@ httpd_server *httpd_initialize(char *hostname, httpd_sockaddr * sa4P,
 		       SERVER_SOFTWARE,
 		       httpd_ntoa(hs->listen4_fd != -1 ? sa4P : sa6P),
 		       (int)hs->port);
-		       
-	/*Author  : zhangbin.eos@foxmail.com ---------------*/
-	hs->cgi_cnnt_fd=cgi_connect_thttpd_open(CGIDAEMON_LINK_NAME,NULL);
-	/*End	  : 9/11/2018 ---------------------------------*/
+
+	/*Author  : zhangbin.eos@foxmail.com --------------- */
+	hs->cgi_cnnt_fd = cgi_connect_thttpd_open(CGIDAEMON_LINK_NAME, NULL);
+	/*End     : 9/11/2018 --------------------------------- */
 	return hs;
 }
 
@@ -477,10 +476,10 @@ void httpd_terminate(httpd_server * hs)
 	httpd_unlisten(hs);
 	if (hs->logfp != (FILE *) 0)
 		(void)fclose(hs->logfp);
-	if(hs->cgi_cnnt_fd)
+	if (hs->cgi_cnnt_fd)
 	{
 		close(hs->cgi_cnnt_fd);
-		hs->cgi_cnnt_fd=-1;
+		hs->cgi_cnnt_fd = -1;
 	}
 	free_httpd_server(hs);
 }
@@ -1694,7 +1693,7 @@ int httpd_get_conn(httpd_server * hs, int listen_fd, httpd_conn * hc)
 #endif				/* TILDE_MAP_2 */
 		hc->initialized = 1;
 	}
-	
+
 	hc->cgi_cnnt_fd = hs->cgi_cnnt_fd;
 
 	/* Accept the new connection. */
@@ -2221,7 +2220,9 @@ int httpd_parse_request(httpd_conn * hc)
 							    ((int)cp_dash[1]))
 							{
 								hc->last_byte_index = atoll(cp_dash + 1);
-								if (hc->last_byte_index < 0)
+								if (hc->
+								    last_byte_index
+								    < 0)
 									hc->last_byte_index = -1;
 							}
 						}
@@ -2914,7 +2915,8 @@ mode  links    bytes  last-changed  name\n\
 						(void)my_snprintf(rname,
 								  maxrname,
 								  "%s%s",
-								  hc->origfilename,
+								  hc->
+								  origfilename,
 								  nameptrs[i]);
 				}
 				httpd_realloc_str(&encrname, &maxencrname,
@@ -3114,7 +3116,7 @@ static char *hostname_map(char *hostname)
 ** letting malicious clients overrun a buffer.  We don't have
 ** to worry about freeing stuff since we're a sub-process.
 */
-static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
+static void make_envp(httpd_conn * hc, ENV_PRINT_FUNC print_func, void *param)
 {
 	static char *envp[50];
 	int envn;
@@ -3206,22 +3208,21 @@ static void make_envp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 
 	envp[envn] = (char *)0;
 	/*-------Author  : zhangbin.eos@foxmail.com */
-	int i=0;
-	for(i=0;i<envn;i++)
+	int i = 0;
+	for (i = 0; i < envn; i++)
 	{
-		print_func(param,envp[i],strlen(envp[i]));
-
-	}		
+		print_func(param, envp[i], strlen(envp[i]));
+	}
 	free(envp[0]);
 	/*-------End	 : 5/11/2018 */
-	return ;
+	return;
 }
 
 /* Set up argument vector.  Again, we don't have to worry about freeing stuff
 ** since we're a sub-process.  This gets done after make_envp() because we
 ** scribble on hc->query.
 */
-static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
+static void make_argp(httpd_conn * hc, ENV_PRINT_FUNC print_func, void *param)
 {
 	char **argp;
 	int argn;
@@ -3269,15 +3270,15 @@ static void make_argp(httpd_conn * hc,ENV_PRINT_FUNC print_func ,void * param)
 
 	argp[argn] = (char *)0;
 	/*-------Author  : zhangbin.eos@foxmail.com */
-	int i=0;
-	for(i=0;i<argn;i++)
+	int i = 0;
+	for (i = 0; i < argn; i++)
 	{
-		print_func(param,argp[i],strlen(argp[i]));
+		print_func(param, argp[i], strlen(argp[i]));
 	}
 	free(argp);
 	/*-------End	 : 5/11/2018 */
 
-	return ;
+	return;
 }
 
 /* This routine is used only for POST requests.  It reads the data
@@ -3687,56 +3688,59 @@ static void cgi_child(httpd_conn * hc)
 /*-------Author  : zhangbin.eos@foxmail.com
 这部分传递可以使用domain socket,这种方法在post的时候可以传递文件描述符,或其他控制信息.
 -------End     : 5/11/2018 */
-int print_func_debug(void * handle,char * data,size_t datalen)
+int print_func_debug(void *handle, char *data, size_t datalen)
 {
-	int * pfd=(int * )handle;
-	if(data==NULL)
+	int *pfd = (int *)handle;
+	if (data == NULL)
 	{
-		data="NULL";
-		datalen=strlen(data);
+		data = "NULL";
+		datalen = strlen(data);
 	}
-	if(pfd==NULL)
+	if (pfd == NULL)
 	{
 		syslog(LOG_ERR, "cgi_daemon_handle==NUL");
 		return -1;
 	}
-	
-	if(cgi_connect_write(*pfd,NULL,data,datalen)<0)
+
+	if (cgi_connect_write(*pfd, NULL, data, datalen) < 0)
 	{
-		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s",errno,strerror(errno));
+		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s", errno,
+		       strerror(errno));
 		return -1;
 	}
-	
-	if(cgi_connect_write(*pfd,NULL,";;\r\n",4)<0)
+
+	if (cgi_connect_write(*pfd, NULL, ";;\r\n", 4) < 0)
 	{
-		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s",errno,strerror(errno));
+		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s", errno,
+		       strerror(errno));
 		return -1;
 	}
-	
-	syslog(LOG_ERR, "print_func,str=%s;;len=%d",data,datalen);
+
+	syslog(LOG_ERR, "print_func,str=%s;;len=%d", data, datalen);
 	return datalen;
 }
 
 static int cgi_debug(httpd_conn * hc)
 {
-	
-	/*-------Author  : zhangbin.eos@foxmail.com */
-	
-	make_envp(hc,print_func_debug,&hc->cgi_cnnt_fd);
-	make_argp(hc,print_func_debug,&hc->cgi_cnnt_fd);
 
-	/*back*/
+	/*-------Author  : zhangbin.eos@foxmail.com */
+
+	make_envp(hc, print_func_debug, &hc->cgi_cnnt_fd);
+	make_argp(hc, print_func_debug, &hc->cgi_cnnt_fd);
+
+	/*back */
 	char buff[128];
-	sprintf(buff,"%s","Content-type: application/json; charset=utf-8\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","Cache-Control: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","Pragma: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));	
-	sprintf(buff,"%s","Expires: 0\r\n\r\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
-	sprintf(buff,"%s","{\"status\":\"success\"}\n\n");
-	httpd_write_fully(hc->conn_fd,buff,strlen(buff));
+	sprintf(buff, "%s",
+		"Content-type: application/json; charset=utf-8\r\n");
+	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	sprintf(buff, "%s", "Cache-Control: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	sprintf(buff, "%s", "Pragma: no-cache\r\n");
+	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	sprintf(buff, "%s", "Expires: 0\r\n\r\n");
+	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	sprintf(buff, "%s", "{\"status\":\"success\"}\n\n");
+	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
 	/*-------End	 : 5/11/2018 */
 	return 0;
 }
@@ -3754,26 +3758,26 @@ static int cgi(httpd_conn * hc)
 	}
 	++hc->hs->cgi_count;
 	httpd_clear_ndelay(hc->conn_fd);
-	/*Author	: zhangbin.eos@foxmail.com 5/11/2018 */
+	/*Author        : zhangbin.eos@foxmail.com 5/11/2018 */
 	/* make_envp() and make_argp() have very hard Memory leak,
 	 * if use fork,it's not problem.
 	 */
-	
-//	r = fork();
-//	if (r < 0)
-//	{
-//	      syslog(LOG_ERR, "fork - %m");
-//	      httpd_send_err(hc, 500, err500title, "", err500form,
-//	                     hc->encodedurl);
-//	      return -1;
-//	}
-//	if (r == 0)
-//	{
-//	      /* Child process. */
-//	      sub_process = 1;
-//	      httpd_unlisten(hc->hs);
-//	      cgi_child(hc);
-//	}
+
+//      r = fork();
+//      if (r < 0)
+//      {
+//            syslog(LOG_ERR, "fork - %m");
+//            httpd_send_err(hc, 500, err500title, "", err500form,
+//                           hc->encodedurl);
+//            return -1;
+//      }
+//      if (r == 0)
+//      {
+//            /* Child process. */
+//            sub_process = 1;
+//            httpd_unlisten(hc->hs);
+//            cgi_child(hc);
+//      }
 	/*-------Author  : zhangbin.eos@foxmail.com */
 	cgi_debug(hc);
 	/*-------End	 : 5/11/2018 */
@@ -4105,9 +4109,8 @@ static void make_log_entry(httpd_conn * hc, struct timeval *nowP)
 		(void)my_snprintf(url, sizeof(url),
 				  "/%.100s%.200s",
 				  hc->hostname ==
-				  (char *)0 ? hc->hs->
-				  server_hostname : hc->hostname,
-				  hc->encodedurl);
+				  (char *)0 ? hc->hs->server_hostname : hc->
+				  hostname, hc->encodedurl);
 	else
 		(void)my_snprintf(url, sizeof(url), "%.200s", hc->encodedurl);
 	/* Format the bytes. */

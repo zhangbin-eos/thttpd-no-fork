@@ -18,7 +18,8 @@
 #ifndef __CGI_CONNECT_H__
 #define __CGI_CONNECT_H__
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /*=============include================================*/
@@ -36,7 +37,6 @@ extern "C" {
 
 /*=============EXTERN FUNC============================*/
 
-
 /*******************************
 -Function Name :cgi_connect_thttpd_open
 -Description   :
@@ -46,26 +46,27 @@ extern "C" {
 -Return Value  :
 -Author        : zhangbin.eos@foxmail.com 2018/9/7
 *********************************/
-int cgi_connect_thttpd_open(char * objname,void * arg);
+	extern int cgi_connect_thttpd_open(char *objname, void *arg);
 
+	extern int cgi_connect_cgi_daemon_open(char *selfname, void *arg);
 
-	/* Copy from libhttp.c 
-	int httpd_read_fully(int fd, void *buf, size_t nbytes)
-	int httpd_write_fully(int fd, void *buf, size_t nbytes)
-	*/
+	extern int cgi_connect_cgi_daemon_accept(int fd, void *arg);
+
+/* Copy from libhttp.c 
+   int httpd_read_fully(int fd, void *buf, size_t nbytes)
+   int httpd_write_fully(int fd, void *buf, size_t nbytes)
+ */
 
 /* Read the requested buffer completely, accounting for interruptions. */
-int cgi_connect_read(int fd, void*arg, void *buf, size_t nbytes);
-
+	extern int cgi_connect_read(int fd, void *arg, void *buf,
+				    size_t nbytes);
 
 /* Write the requested buffer completely, accounting for interruptions. */
-int cgi_connect_write(int fd,void*arg, const char *buf, size_t nbytes);
-
-
+	extern int cgi_connect_write(int fd, void *arg, const char *buf,
+				     size_t nbytes);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__CGI_CONNECT_H__
-
+#endif				//__CGI_CONNECT_H__
