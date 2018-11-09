@@ -81,6 +81,7 @@
 #include "match.h"
 #include "tdate_parse.h"
 
+
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
 #endif
@@ -380,6 +381,10 @@ httpd_server *httpd_initialize(char *hostname, httpd_sockaddr * sa4P,
 		       SERVER_SOFTWARE,
 		       httpd_ntoa(hs->listen4_fd != -1 ? sa4P : sa6P),
 		       (int)hs->port);
+		       
+	/*Author  : zhangbin.eos@foxmail.com ---------------*/
+	hs->cgi_cnnt_fd=cgi_connect_thttpd_open(CGIDAEMON_LINK_NAME,NULL);
+	/*End	  : 9/11/2018 ---------------------------------*/
 	return hs;
 }
 
@@ -472,6 +477,11 @@ void httpd_terminate(httpd_server * hs)
 	httpd_unlisten(hs);
 	if (hs->logfp != (FILE *) 0)
 		(void)fclose(hs->logfp);
+	if(hs->cgi_cnnt_fd)
+	{
+		close(hs->cgi_cnnt_fd);
+		hs->cgi_cnnt_fd=-1;
+	}
 	free_httpd_server(hs);
 }
 
@@ -1684,6 +1694,8 @@ int httpd_get_conn(httpd_server * hs, int listen_fd, httpd_conn * hc)
 #endif				/* TILDE_MAP_2 */
 		hc->initialized = 1;
 	}
+	
+	hc->cgi_cnnt_fd = hs->cgi_cnnt_fd;
 
 	/* Accept the new connection. */
 	sz = sizeof(sa);
@@ -3677,12 +3689,30 @@ static void cgi_child(httpd_conn * hc)
 -------End     : 5/11/2018 */
 int print_func_debug(void * handle,char * data,size_t datalen)
 {
-	print_func_handle_t * print_handle=(print_func_handle_t * )handle;
+	int * pfd=(int * )handle;
 	if(data==NULL)
 	{
 		data="NULL";
 		datalen=strlen(data);
 	}
+	if(pfd==NULL)
+	{
+		syslog(LOG_ERR, "cgi_daemon_handle==NUL");
+		return -1;
+	}
+	
+	if(cgi_connect_write(*pfd,NULL,data,datalen)<0)
+	{
+		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s",errno,strerror(errno));
+		return -1;
+	}
+	
+	if(cgi_connect_write(*pfd,NULL,";;\r\n",4)<0)
+	{
+		syslog(LOG_ERR, "cgi_daemon_write error(%d):%s",errno,strerror(errno));
+		return -1;
+	}
+	
 	syslog(LOG_ERR, "print_func,str=%s;;len=%d",data,datalen);
 	return datalen;
 }
@@ -3692,10 +3722,10 @@ static int cgi_debug(httpd_conn * hc)
 	
 	/*-------Author  : zhangbin.eos@foxmail.com */
 	
-	make_envp(hc,print_func_debug,NULL);
-	make_argp(hc,print_func_debug,NULL);
+	make_envp(hc,print_func_debug,&hc->cgi_cnnt_fd);
+	make_argp(hc,print_func_debug,&hc->cgi_cnnt_fd);
 
-	
+	/*back*/
 	char buff[128];
 	sprintf(buff,"%s","Content-type: application/json; charset=utf-8\r\n");
 	httpd_write_fully(hc->conn_fd,buff,strlen(buff));

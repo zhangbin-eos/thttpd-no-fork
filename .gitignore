@@ -33,6 +33,7 @@ cgi-src/redirect
 cgi-src/ssi
 extras/htpasswd
 extras/makeweb
+cgi-daemon/cgi_daemon
 thttpd
 
 # test/debug

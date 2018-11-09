@@ -80,3 +80,11 @@ env:
 arg:
 	lua_cgi_test.cgi
 
+
+2. cgi-daemon的使用
+
+- 先启动cgi-daemon,再启动thttpd
+- cgi-daemon将接收thttpd发送来的http的关于cgi的请求信息
+
+
+

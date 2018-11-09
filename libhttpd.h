@@ -35,6 +35,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+/*Author  : zhangbin.eos@foxmail.com ---------------*/
+#include "cgi_connect.h"
+/*End     : 9/11/2018 ---------------------------------*/
 
 #if defined(AF_INET6) && defined(IN6_IS_ADDR_V4MAPPED)
 #define USE_IPV6
@@ -88,6 +91,7 @@ typedef struct
 	char *url_pattern;
 	char *local_pattern;
 	int no_empty_referrers;
+	int cgi_cnnt_fd;
 } httpd_server;
 
 /* A connection. */
@@ -146,6 +150,7 @@ typedef struct
 	struct stat sb;
 	int conn_fd;
 	char *file_address;
+	int cgi_cnnt_fd;	/*copy from httpd_server->cgi_cnnt_fd*/
 } httpd_conn;
 
 /* Methods. */

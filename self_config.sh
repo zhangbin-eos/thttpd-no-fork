@@ -31,3 +31,6 @@ EOF
 
 mkdir -p $(pwd)/objs/www/cgi-bin/
 cp lua_cgi_test.lua $(pwd)/objs/www/cgi-bin/lua_cgi_test.cgi
+
+
+

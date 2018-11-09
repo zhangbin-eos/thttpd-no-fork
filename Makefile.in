@@ -62,11 +62,11 @@ INSTALL =	@INSTALL@
 	@rm -f $@
 	$(CC) $(CFLAGS) -c $*.c
 
-SRC =		thttpd.c libhttpd.c fdwatch.c mmc.c timers.c match.c tdate_parse.c
+SRC =		thttpd.c libhttpd.c fdwatch.c mmc.c timers.c match.c tdate_parse.c cgi_connect.c
 
 OBJ =		$(SRC:.c=.o) @LIBOBJS@
 
-ALL =		thttpd
+ALL =		thttpd cgi_daemon
 
 GENHDR =	mime_encodings.h mime_types.h
 
@@ -80,6 +80,9 @@ this:		$(ALL)
 thttpd: $(OBJ)
 	@rm -f $@
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LIBS) $(NETLIBS)
+cgi_daemon:
+	$(MAKE) -C ./cgi-daemon/ clean
+	$(MAKE) -C ./cgi-daemon/
 
 mime_encodings.h:	mime_encodings.txt
 	rm -f mime_encodings.h
@@ -111,6 +114,7 @@ install:	installthis install-man installsubdirs
 installthis:
 	-mkdir -p $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 555 -o bin -g bin thttpd $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 555 -o bin -g bin cgi_daemon $(DESTDIR)$(BINDIR)
 
 install-man:
 	-mkdir -p $(DESTDIR)$(MANDIR)/man8
@@ -165,7 +169,7 @@ tar:
 
 thttpd.o:	config.h version.h libhttpd.h fdwatch.h mmc.h timers.h match.h
 libhttpd.o:	config.h version.h libhttpd.h mime_encodings.h mime_types.h \
-		mmc.h timers.h match.h tdate_parse.h
+	mmc.h timers.h match.h tdate_parse.h cgi_connect.h
 fdwatch.o:	fdwatch.h
 mmc.o:		mmc.h libhttpd.h
 timers.o:	timers.h
