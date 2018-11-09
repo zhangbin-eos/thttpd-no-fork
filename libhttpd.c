@@ -3715,8 +3715,6 @@ int print_func_debug(void *handle, char *data, size_t datalen)
 		       strerror(errno));
 		return -1;
 	}
-
-	syslog(LOG_ERR, "print_func,str=%s;;len=%d", data, datalen);
 	return datalen;
 }
 
@@ -3724,23 +3722,34 @@ static int cgi_debug(httpd_conn * hc)
 {
 
 	/*-------Author  : zhangbin.eos@foxmail.com */
-
+	int res,i;
 	make_envp(hc, print_func_debug, &hc->cgi_cnnt_fd);
 	make_argp(hc, print_func_debug, &hc->cgi_cnnt_fd);
 
 	/*back */
 	char buff[128];
-	sprintf(buff, "%s",
-		"Content-type: application/json; charset=utf-8\r\n");
-	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
-	sprintf(buff, "%s", "Cache-Control: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
-	sprintf(buff, "%s", "Pragma: no-cache\r\n");
-	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
-	sprintf(buff, "%s", "Expires: 0\r\n\r\n");
-	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
-	sprintf(buff, "%s", "{\"status\":\"success\"}\n\n");
-	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	uint8_t stat = 0;
+	
+	while(1)
+	{
+		res = cgi_connect_read(hc->cgi_cnnt_fd,NULL,buff);
+		for(i=0;i<res;i++)
+		{
+			if()
+		}
+		httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+	}
+//	sprintf(buff, "%s",
+//		"Content-type: application/json; charset=utf-8\r\n");
+//	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+//	sprintf(buff, "%s", "Cache-Control: no-cache\r\n");
+//	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+//	sprintf(buff, "%s", "Pragma: no-cache\r\n");
+//	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+//	sprintf(buff, "%s", "Expires: 0\r\n\r\n");
+//	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
+//	sprintf(buff, "%s", "{\"status\":\"success\"}\n\n");
+//	httpd_write_fully(hc->conn_fd, buff, strlen(buff));
 	/*-------End	 : 5/11/2018 */
 	return 0;
 }

@@ -229,6 +229,17 @@ int cgi_daemon_process(int fd)
 					if (cgi_rqt_info->argcnt == 1)
 					{
 						cgi_request_clean(cgi_rqt_info);
+						sprintf(buff, "%s","Content-type: application/json; charset=utf-8\r\n");
+						cgi_connect_write(fd, NULL, buff, strlen(buff));
+						sprintf(buff, "%s", "Cache-Control: no-cache\r\n");
+						cgi_connect_write(fd, NULL, buff, strlen(buff));
+						sprintf(buff, "%s", "Pragma: no-cache\r\n");
+						cgi_connect_write(fd, NULL, buff, strlen(buff));
+						sprintf(buff, "%s", "Expires: 0\r\n\r\n");
+						cgi_connect_write(fd, NULL, buff, strlen(buff));
+						sprintf(buff, "%s", "{\"status\":\"success\"}\n\n;;\r\n");
+						cgi_connect_write(fd, NULL, buff, strlen(buff));
+						break;
 					}
 				}
 			}
